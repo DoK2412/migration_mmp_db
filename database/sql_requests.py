@@ -73,33 +73,33 @@ VALUES
 ADD_OLD = '''
 -- добавление корректировки до начала
 INSERT INTO adjustment_old
-    (wallet_id, amount, verified, description, status, color, creature_date)
+    (wallet_id, amount, verified, description, status, color, creature_date, name, currency)
 VALUES 
-    ($1, $2, $3, $4, $5, $6, $7) RETURNING id
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id
 '''
 
 ADD_NEW = '''
 -- добавление корректировки до начала
 INSERT INTO adjustment_new
-    (wallet_id, amount, verified, description, status, color, creature_date)
+    (wallet_id, amount, verified, description, status, color, creature_date, name, currency)
 VALUES 
-    ($1, $2, $3, $4, $5, $6, $7) RETURNING id
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id
 '''
 
 ADD_OPERATION_KOR = '''
 -- добавление общей операции корректировки
 INSERT INTO operations
-    (operations_id, type_id, creature_date, description, user_id, adjustment_oll_id, adjustment_new_id, groups)
+    (operations_id, type_id, creature_date, description, user_id, adjustment_oll_id, adjustment_new_id, groups, from_wallets_id, to_wallets_id)
 VALUES 
-    ($1, $2, $3, $4, $5, $6, $7, $8)
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 '''
 
 ADD_WRITE_BALANSE = '''
 -- добавление баланса записи
 INSERT INTO write_balance
-    (date, wallet_id, amount, currency)
+    (date, wallet_id, amount, currency, user_id)
 VALUES
-    ($1, $2, $3, $4) RETURNING id
+    ($1, $2, $3, $4, $5) RETURNING id
 '''
 
 ADD_OPERATION_WRITE = '''

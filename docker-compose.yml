@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container  # Имя контейнера
+    environment:
+      POSTGRES_DB: 'mmp_test'  # Имя базы данных
+      POSTGRES_USER: 'dok2412'  # Имя пользователя
+      POSTGRES_PASSWORD: '451183311q'  # Пароль для пользователя
+    command:
+      - 'postgres'
+      - '-c'
+      - 'max_connections=50'
+      - '-c'
+      - 'shared_buffers=1GB'
+      - '-c'
+      - 'effective_cache_size=4GB'
+      - '-c'
+      - 'work_mem=16MB'
+      - '-c'
+      - 'maintenance_work_mem=512MB'
+      - '-c'
+      - 'random_page_cost=1.1'
+      - '-c'
+      - 'temp_file_limit=10GB'
+      - '-c'
+      - 'log_min_duration_statement=200ms'
+      - '-c'
+      - 'idle_in_transaction_session_timeout=10s'
+      - '-c'
+      - 'lock_timeout=1s'
+      - '-c'
+      - 'statement_timeout=60s'
+      - '-c'
+      - 'shared_preload_libraries=pg_stat_statements'
+      - '-c'
+      - 'pg_stat_statements.max=10000'
+      - '-c'
+      - 'pg_stat_statements.track=all'
+    ports:
+      - "5432:5432"  # Прокидываем порт
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U dok2412 -d mmp_test' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Создаем том для хранения данных
+
+volumes:
+  postgres_data: {}  # Определение тома для хранения данных

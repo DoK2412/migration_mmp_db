@@ -17,18 +17,6 @@ load_dotenv()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await JobDb().create_pool()
-    async with JobDb() as pool:
-        await pool.execute(td.OPERATION_TYPE_TABLE)
-        await pool.execute(td.USER_ROLE_TABLE)
-        await pool.execute(td.USERS_TABLE)
-        await pool.execute(td.WALLET_TABLE)
-        await pool.execute(td.FROM_WALLET_TABLE)
-        await pool.execute(td.TO_WALLET_TABLE)
-        await pool.execute(td.ADJUSTMENT_NEW_TABLE)
-        await pool.execute(td.ADJUSTMENT_OLL_TABLE)
-        await pool.execute(td.WRITE_BALANCE_TABLE)
-        await pool.execute(td.APPLICATIONS_TABLE)
-        await pool.execute(td.OPERATIONS_TABLE)
     yield
     await JobDb().close_pool()
 
