@@ -60,7 +60,7 @@ async def create_wallet():
 
 
 async def create_operation():
-    # try:
+    try:
         filename = os.path.dirname(os.path.realpath(__file__))+'\operations.json'
         with open(filename, 'r', encoding='utf-8') as file:
             data = json.load(file)
@@ -131,28 +131,34 @@ async def create_operation():
 
                                 await pool.fetchval(sql.ADD_OPERATION_KOR, value['id'], type_id, date, value['description'], user_id, old_id, new_id, value['group'], from_wallets_id, to_wallets_id)
 
-                    # else:
-                    #     type_id = await pool.fetchval(sql.TYPE_ID, value['type'])
-                    #     user_id = await pool.fetchval(sql.USER_ID, value['user']['id'])
-                    #     if value.get('from_wallets') and len(value['from_wallets']) > 0:
-                    #         wallet_id = await pool.fetchval(sql.WALLET_ID, value['from_wallets'][0]['id'])
-                    #         from_wallets_id = await pool.fetchval(sql.ADD_FROM_WALLETS,
-                    #                                               value['from_wallets'][0]['before'],
-                    #                                               value['from_wallets'][0]['amount'],
-                    #                                               value['from_wallets'][0]['after'], wallet_id,
-                    #                                               value['date'], value['from_wallets'][0]['currency'])
-                    #     else:
-                    #         from_wallets_id = None
-                    #     if value.get('to_wallets') and len(value['to_wallets']) > 0:
-                    #         wallet_id = await pool.fetchval(sql.WALLET_ID, value['to_wallets'][0]['id'])
-                    #         to_wallets_id = await pool.fetchval(sql.ADD_TO_WALLETS, value['to_wallets'][0]['before'],
-                    #                                             value['to_wallets'][0]['amount'],
-                    #                                             value['to_wallets'][0]['after'], wallet_id,
-                    #                                             value['date'], value['to_wallets'][0]['currency'])
-                    #     else:
-                    #         to_wallets_id = None
-                    #
-                    #     await pool.fetchval(sql.ADD_OPERATION, value['id'], type_id, value['date'], value['description'], user_id, from_wallets_id, to_wallets_id, value['group'])
+                            else:
+                                type_id = await pool.fetchval(sql.TYPE_ID, value['type'])
+                                user_id = await pool.fetchval(sql.USER_ID, value['user']['id'])
+                                if value.get('from_wallets') and len(value['from_wallets']) > 0:
+                                    from_wallets_id = ''
+                                    for wallet in value['from_wallets']:
+                                        wallet_id = await pool.fetchval(sql.WALLET_ID, wallet['id'])
+                                        from_wallets = await pool.fetchval(sql.ADD_FROM_WALLETS,
+                                                                              wallet['before'],
+                                                                              wallet['amount'],
+                                                                              wallet['after'], wallet_id,
+                                                                              date, wallet['currency'])
+                                        from_wallets_id = from_wallets_id + ' ' + str(from_wallets)
+                                else:
+                                    from_wallets_id = None
+                                if value.get('to_wallets') and len(value['to_wallets']) > 0:
+                                    to_wallets_id = ''
+                                    for wallet in value['to_wallets']:
+                                        wallet_id = await pool.fetchval(sql.WALLET_ID, wallet['id'])
+                                        to_wallets = await pool.fetchval(sql.ADD_TO_WALLETS, wallet['before'],
+                                                                            wallet['amount'],
+                                                                            wallet['after'], wallet_id,
+                                                                            date, wallet['currency'])
+                                        to_wallets_id = to_wallets_id + ' ' + str(to_wallets)
+                                else:
+                                    to_wallets_id = None
+
+                                await pool.fetchval(sql.ADD_OPERATION, value['id'], type_id, date, value['description'], user_id, from_wallets_id, to_wallets_id, value['group'])
         return "Операции перенесены."
-    # except Exception as exc:
-    #     return f"При переносе данных произошла ошибка {exc}"
+    except Exception as exc:
+        return f"При переносе данных произошла ошибка {exc}"
